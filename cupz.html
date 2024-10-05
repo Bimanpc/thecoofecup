@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Coffee Game</title>
+    <style>
+        body {
+            background-color: #f5f5dc;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #gameArea {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            border: 2px solid #000;
+            margin: 20px auto;
+            background: url('https://images.unsplash.com/photo-1511920170033-f8396924c348') no-repeat center;
+            background-size: cover;
+        }
+        #character {
+            position: absolute;
+            bottom: 0;
+            left: 180px;
+            width: 40px;
+            height: 60px;
+            background: brown;
+        }
+        .coffeeCup {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('https://img.icons8.com/emoji/48/000000/coffee-emoji.png') no-repeat center;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body>
+    <h1>Catch the Coffee Game</h1>
+    <p>Use the left and right arrow keys to move!</p>
+    <div id="gameArea">
+        <div id="character"></div>
+    </div>
+    <script>
+        const gameArea = document.getElementById("gameArea");
+        const character = document.getElementById("character");
+        const gameWidth = 400;
+        let characterPosition = 180;
+        let score = 0;
+
+        function moveCharacter(event) {
+            if (event.key === "ArrowLeft" && characterPosition > 0) {
+                characterPosition -= 20;
+            }
+            if (event.key === "ArrowRight" && characterPosition < gameWidth - 40) {
+                characterPosition += 20;
+            }
+            character.style.left = characterPosition + "px";
+        }
+
+        function createCoffeeCup() {
+            const coffeeCup = document.createElement("div");
+            coffeeCup.classList.add("coffeeCup");
+            coffeeCup.style.left = Math.floor(Math.random() * (gameWidth - 30)) + "px";
+            coffeeCup.style.top = "0px";
+            gameArea.appendChild(coffeeCup);
+            moveCoffeeCup(coffeeCup);
+        }
+
+        function moveCoffeeCup(coffeeCup) {
+            let coffeeCupInterval = setInterval(() => {
+                let currentTop = parseInt(coffeeCup.style.top);
+                if (currentTop < 570) {
+                    coffeeCup.style.top = currentTop + 5 + "px";
+                } else {
+                    const characterLeft = characterPosition;
+                    const coffeeCupLeft = parseInt(coffeeCup.style.left);
+                    if (coffeeCupLeft >= characterLeft && coffeeCupLeft <= characterLeft + 40) {
+                        score++;
+                        alert(`Caught! Score: ${score}`);
+                        clearInterval(coffeeCupInterval);
+                        gameArea.removeChild(coffeeCup);
+                    } else if (currentTop >= 570) {
+                        clearInterval(coffeeCupInterval);
+                        gameArea.removeChild(coffeeCup);
+                    }
+                }
+            }, 50);
+        }
+
+        document.addEventListener("keydown", moveCharacter);
+        setInterval(createCoffeeCup, 2000);
+    </script>
+</body>
+</html>
